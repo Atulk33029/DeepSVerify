@@ -1,0 +1,11 @@
+model_version: siamese-resnet18-v1
+seed: 42
+pretrained: false
+normalize_embeddings: false
+margin: 1.0
+augmentation: none
+normalization: divide_by_255
+batch_size: 32
+epochs: 10
+learning_rate: 0.0001
+num_workers: 0

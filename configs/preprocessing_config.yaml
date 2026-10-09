@@ -1,0 +1,89 @@
+# configs/preprocessing_config.yaml
+#
+# PILOT STAGE. Two decisions are still open and are being compared
+# empirically rather than assumed -- see `pilot.intensity_variants` and
+# `pilot.margin_fractions` below. Everything else here reflects decisions
+# already made from real, measured Phase 2 EDA evidence (see chat history
+# / reports/phase2_eda_report.json):
+#
+#   - target canvas 384x128 (3:1): chosen because the real foreground
+#     bounding-box aspect ratio is ~2:1 for CEDAR but ~4.3-4.9:1 (up to
+#     7:1 at p95) for BHSig260 -- a square canvas would waste most of the
+#     pixel budget on padding for BHSig260. ResNet-18's conv stack accepts
+#     any input size; only the final FC layer needs adapting, so
+#     ImageNet-pretrained weights still mostly transfer at this shape.
+#   - Otsu threshold with "<=" for foreground detection: confirmed
+#     correct on real samples from all three datasets after fixing an
+#     off-by-one that broke on BHSig260's already-bilevel {0,255} images
+#     (see preprocessing/eda.py comments).
+#   - PNG output, no lossy compression.
+
+preprocessing_version: "phase2-full-v1"
+
+# --------------------------------------------------------------------
+# LOCKED DECISION (approved after pilot review -- see
+# reports/phase2_pilot_summary.csv and the visual comparison grids):
+# flatten_bg intensity handling + 10% margin. Rationale: flatten_bg gave
+# a measured, visible benefit on CEDAR (normalizes its gray paper
+# background toward white with no visible loss of stroke antialiasing,
+# removing a spurious cross-dataset signal) with no observed downside on
+# any dataset; it is a near-exact no-op on BHSig260 (already background
+# =255). 10% margin showed no stroke clipping in any reviewed example and
+# gave marginally better canvas-fill efficiency than 5%; the high
+# margin_clamped rate on BHSig260 (~48%) reflects real source-image
+# geometry (ink already runs close to the raw scan's edge), not harm from
+# requesting more margin.
+locked:
+  intensity_variant: "flatten_bg"
+  margin_fraction: 0.10
+
+target:
+  width: 384
+  height: 128
+  pad_value: 255          # white padding, matching both datasets' paper background
+
+crop:
+  strategy: "foreground_bbox_with_margin"   # crop to Otsu ink bbox + margin, never independently stretched
+
+interpolation:
+  downscale: "box"        # anti-aliased area-average downscale (many raw images are ~900-1300px wide -> 384)
+  upscale: "bicubic"      # only triggered for unusually small/tightly-cropped signatures
+
+intensity:
+  # Used only by the "flatten_bg" pilot variant. Maps the estimated
+  # background level (median of pixels above the Otsu threshold) to 255
+  # with a single global gain -- no per-pixel thresholding of the stored
+  # image. On BHSig260 (already background=255) this gain is ~1.0 and is
+  # effectively a no-op; on CEDAR (background ~233-239) it lightens the
+  # paper without touching stroke antialiasing.
+  flatten_min_bg_level: 100   # sanity floor: skip flattening (flag instead) if estimated bg is implausibly dark
+
+flags:
+  # Thresholds for flagging (never silently dropping) unusual images
+  # during preprocessing QC.
+  polarity_suspect_fraction: 0.5   # foreground_fraction above this suggests dark/light may be inverted
+  tiny_foreground_fraction: 0.003  # below this, the detected ink region is suspiciously small
+  extreme_aspect_low: 0.3          # foreground bbox aspect ratio below this is flagged
+  extreme_aspect_high: 10.0        # foreground bbox aspect ratio above this is flagged
+  heavy_upscale_factor: 3.0        # resize scale factor above this means the crop was tiny relative to target
+
+output:
+  format: "png"
+  images_dir: "preprocessed/images"
+  metadata_csv: "preprocessed/preprocessing_metadata.csv"
+
+# --------------------------------------------------------------------
+# PILOT-ONLY settings. This section (and its outputs) are throwaway --
+# not part of the final base pipeline. It exists purely to generate a
+# small, comparable set of real outputs across the two undecided
+# variables so a visual + quantitative decision can be made before
+# committing to a single base pipeline in Parts 3-4 proper.
+# --------------------------------------------------------------------
+pilot:
+  n_per_group: 8            # sampled per (dataset, signature_type) -- 6 groups x 8 = 48 images per variant
+  seed: 42
+  intensity_variants: ["original", "flatten_bg"]
+  margin_fractions: [0.05, 0.10]
+  output_dir: "reports/phase2_pilot"
+  comparison_grid_dir: "reports/phase2_visual_audit/pilot_comparisons"
+  n_comparison_examples: 6   # representative images to render full before/after grids for

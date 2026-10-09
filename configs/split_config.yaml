@@ -1,0 +1,53 @@
+# configs/split_config.yaml
+#
+# Phase 3A: writer-disjoint split configuration. All proportions and
+# thresholds here are the single source of truth for how the split was
+# produced -- never hard-coded in the splitting code itself.
+
+split_version: "phase3a-v1"
+seed: 42
+
+# Writer-level target proportions (must sum to 1.0). Applied
+# independently within each dataset (CEDAR, BHSIG_BENGALI, BHSIG_HINDI)
+# via largest-remainder apportionment, so each split gets a
+# representative mix of all three datasets rather than, say, concentrating
+# one dataset into test.
+#
+# Rationale for 70/15/15:
+#   - 315 total writers is a modest absolute pool. Per-writer sample
+#     counts are already generous and fairly uniform across all three
+#     datasets (24 genuine + 24-30 forgery per writer, confirmed from
+#     real Phase 1 per-writer statistics) -- so the binding constraint
+#     for this task is DISTINCT WRITER IDENTITIES, not samples per
+#     writer. The majority of writers (70%) go to train so the Siamese
+#     model sees enough writer diversity to learn a genuinely
+#     writer-invariant similarity metric, rather than overfitting to a
+#     small set of handwriting styles.
+#   - 15% (~47 writers) for val and 15% (~47 writers) for test are each
+#     large enough to support reliable threshold selection (val) and an
+#     unbiased final evaluation (test) without starving train of writer
+#     diversity. An 80/10/10 split was considered but rejected: it would
+#     leave val/test with only ~31 writers each, a meaningfully thinner
+#     basis for threshold selection and final reporting on this already
+#     modest writer pool.
+proportions:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+
+# Minimum per-writer genuine/forgery counts required to support Phase 3B
+# pair generation later: >=2 genuine signatures are needed to form a
+# genuine-genuine pair, >=1 forgery to form a genuine-forgery pair.
+# Writers failing this are FLAGGED in the audit report, never silently
+# excluded from the split.
+class_availability:
+  min_genuine: 2
+  min_forgery: 1
+
+paths:
+  unified_metadata_csv: "datasets/unified/metadata.csv"
+  preprocessing_metadata_csv: "preprocessed/preprocessing_metadata.csv"
+  duplicate_audit_csv: "reports/phase2_duplicate_audit.csv"
+  split_manifest_csv: "reports/phase3a_split_manifest.csv"
+  image_split_map_csv: "reports/phase3a_image_split_map.csv"
+  leakage_report_json: "reports/phase3a_split_leakage_report.json"

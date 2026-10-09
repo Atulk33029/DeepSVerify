@@ -1,0 +1,8 @@
+{
+  "threshold": 0.44831085205078125,
+  "selected_on": "val",
+  "method": "nearest empirical FAR/FRR crossing",
+  "checkpoint_sha256": "b44f39630bc7a8f7661fe3029b4b38e72a164ad40d3a7131a08c8338675b6301",
+  "validation_pairs_sha256": "125bc3aec42a5ffa76819326fa082a892b2231ea3c57a28283737234e935395e",
+  "source_checkpoint_sha256": "99e8798ce3d777173ffed45342354ac703c4ae0a3965bf593aa10cf3fcccf20c"
+}

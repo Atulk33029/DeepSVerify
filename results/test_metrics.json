@@ -1,0 +1,116 @@
+{
+  "status": "MEASURED",
+  "positive_class": "genuine",
+  "overall": {
+    "n": 25768,
+    "threshold": 0.44831085205078125,
+    "accuracy": 0.8870304253337473,
+    "precision": 0.9017159429630226,
+    "recall": 0.8687519403911829,
+    "f1": 0.8849270664505673,
+    "specificity": 0.9053089102763117,
+    "sensitivity": 0.8687519403911829,
+    "FAR": 0.0946910897236883,
+    "FRR": 0.13124805960881714,
+    "EER": 0.10516920211114558,
+    "EER_method": "nearest empirical ROC operating point; diagnostic, not deployment threshold",
+    "ROC_AUC": 0.9504721325367782,
+    "PR_AUC": 0.9421062056210594,
+    "average_precision": 0.9421113473257955,
+    "confusion_matrix": [
+      [
+        11664,
+        1220
+      ],
+      [
+        1691,
+        11193
+      ]
+    ]
+  },
+  "datasets": {
+    "BHSIG_BENGALI": {
+      "n": 8124,
+      "threshold": 0.44831085205078125,
+      "accuracy": 0.9212210733628754,
+      "precision": 0.9314170448814927,
+      "recall": 0.9094042343673068,
+      "f1": 0.9202790234180369,
+      "specificity": 0.9330379123584441,
+      "sensitivity": 0.9094042343673068,
+      "FAR": 0.06696208764155588,
+      "FRR": 0.09059576563269325,
+      "EER": 0.0741014278680453,
+      "EER_method": "nearest empirical ROC operating point; diagnostic, not deployment threshold",
+      "ROC_AUC": 0.9728488948137934,
+      "PR_AUC": 0.9651570169002475,
+      "average_precision": 0.9651760194395493,
+      "confusion_matrix": [
+        [
+          3790,
+          272
+        ],
+        [
+          368,
+          3694
+        ]
+      ]
+    },
+    "BHSIG_HINDI": {
+      "n": 13228,
+      "threshold": 0.44831085205078125,
+      "accuracy": 0.8736770486846084,
+      "precision": 0.8640447783178672,
+      "recall": 0.8869065618385243,
+      "f1": 0.8753264194583302,
+      "specificity": 0.8604475355306924,
+      "sensitivity": 0.8869065618385243,
+      "FAR": 0.13955246446930752,
+      "FRR": 0.11309343816147566,
+      "EER": 0.13002721499848802,
+      "EER_method": "nearest empirical ROC operating point; diagnostic, not deployment threshold",
+      "ROC_AUC": 0.9415163050877865,
+      "PR_AUC": 0.9273714911666852,
+      "average_precision": 0.9273815086574901,
+      "confusion_matrix": [
+        [
+          5691,
+          923
+        ],
+        [
+          748,
+          5866
+        ]
+      ]
+    },
+    "CEDAR": {
+      "n": 4416,
+      "threshold": 0.44831085205078125,
+      "accuracy": 0.8641304347826086,
+      "precision": 0.9849215922798552,
+      "recall": 0.7395833333333334,
+      "f1": 0.8448008277289187,
+      "specificity": 0.988677536231884,
+      "sensitivity": 0.7395833333333334,
+      "FAR": 0.011322463768115942,
+      "FRR": 0.2604166666666667,
+      "EER": 0.056159420289855086,
+      "EER_method": "nearest empirical ROC operating point; diagnostic, not deployment threshold",
+      "ROC_AUC": 0.9831125042664357,
+      "PR_AUC": 0.9833573861314404,
+      "average_precision": 0.9833614147428352,
+      "confusion_matrix": [
+        [
+          2183,
+          25
+        ],
+        [
+          575,
+          1633
+        ]
+      ]
+    }
+  },
+  "checkpoint_sha256": "99e8798ce3d777173ffed45342354ac703c4ae0a3965bf593aa10cf3fcccf20c",
+  "pairs_sha256": "2579fd92a6f947a477e99f48a88894739c49acefa2a4d9b0c3ab28c8d6996484"
+}

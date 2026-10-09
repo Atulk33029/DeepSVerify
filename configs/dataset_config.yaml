@@ -1,0 +1,52 @@
+# configs/dataset_config.yaml
+#
+# All machine-specific paths live here, NOT in Python code.
+# Fill in the three dataset paths for your machine / Colab session before
+# running scripts/build_unified_dataset.py.
+#
+# layout:
+#   "legacy"         -> CEDAR's full_org/full_forg folders, or flat
+#                        B-S-<writer>-G-<sample>.tif / H-S-... filenames,
+#                        directly under each dataset's path.
+#   "writer_folders" -> one folder per writer under the dataset's path
+#                        (e.g. <path>/1/images/...), as used by the
+#                        combined Kaggle mirror
+#                        "ishanikathuria/handwritten-signature-datasets".
+#                        Genuine/forgery is still tried via
+#                        genuine_pattern/forged_pattern FIRST; if neither
+#                        matches, a keyword-based fallback looks for
+#                        genuine/forged markers in the folder names or
+#                        filename (documented in dv_datasets/common.py). Any
+#                        file that still can't be classified is reported,
+#                        never guessed silently.
+#
+# Filename regex patterns default to the commonly published layout for
+# each dataset. If `inspect` reveals your copy uses different filenames
+# or a different layout, override the values below -- do not edit the
+# adapter code.
+
+cedar:
+  path: "data/raw/cedar"            # e.g. /content/drive/MyDrive/DeepSVerify/datasets/raw/CEDAR
+  layout: "writer_folders"          # set to "legacy" if your copy has full_org/full_forg instead
+  genuine_dir: "full_org"           # only used when layout: legacy
+  forged_dir: "full_forg"           # only used when layout: legacy
+  genuine_pattern: 'original_(?P<writer>\d+)_(?P<sample>\d+)\.(?P<ext>\w+)$'
+  forged_pattern: 'forgeries_(?P<writer>\d+)_(?P<sample>\d+)\.(?P<ext>\w+)$'
+
+bhsig_bengali:
+  path: "data/raw/bhsig_bengali"    # e.g. .../datasets/raw/BhSig260-Bengali
+  layout: "writer_folders"
+  genuine_pattern: 'B-S-(?P<writer>\d+)-G-(?P<sample>\d+)\.(?P<ext>\w+)$'
+  forged_pattern: 'B-S-(?P<writer>\d+)-F-(?P<sample>\d+)\.(?P<ext>\w+)$'
+
+bhsig_hindi:
+  path: "data/raw/bhsig_hindi"      # e.g. .../datasets/raw/BhSig260-Hindi
+  layout: "writer_folders"
+  genuine_pattern: 'H-S-(?P<writer>\d+)-G-(?P<sample>\d+)\.(?P<ext>\w+)$'
+  forged_pattern: 'H-S-(?P<writer>\d+)-F-(?P<sample>\d+)\.(?P<ext>\w+)$'
+
+output:
+  output_path: "data/unified"
+  compute_perceptual_hash: true      # requires the `imagehash` package
+  copy_images: false                 # if true, copies (never moves/modifies) validated
+                                      # images into output_path/images/<image_id><ext>

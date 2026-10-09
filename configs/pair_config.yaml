@@ -1,0 +1,46 @@
+# configs/pair_config.yaml
+#
+# Phase 3B: pair generation configuration. All decisions here are
+# documented with reasoning in pairing/*.py docstrings and the Phase 3B
+# chat report -- nothing is hard-coded into the pairing code itself.
+
+pair_generation_version: "phase3b-v1"
+seed: 42
+
+# Negative (genuine_forgery) pairs are capped PER WRITER at
+# round(negative_to_positive_ratio * that writer's own positive pair
+# count). Positive (genuine_genuine) pairs are never capped -- all are
+# kept. See pairing/sampling.py's module docstring for full reasoning.
+#
+# Default 1.0 targets a roughly 1:1 balance. Real per-writer counts are
+# exactly uniform within each dataset (24 genuine everywhere; 24 forgery
+# for CEDAR, 30 for Bengali/Hindi -- confirmed from real Phase 1 stats),
+# giving an un-sampled imbalance of ~2.1:1 (CEDAR) to ~2.6:1
+# (Bengali/Hindi) -- mild, so this ratio is a reasonable, standard
+# default for a metric-learning setup, NOT the only defensible choice.
+# Adjust and regenerate (deterministically) if a different ratio is
+# preferred after reviewing the measured counts.
+negative_to_positive_ratio: 1.0
+
+# Writer excluded from pairing entirely (BHSIG_HINDI_123, per the Phase
+# 3A manifest's pair_generation_eligible column) is not listed here --
+# eligibility is read from that manifest at generation time, never
+# re-derived or hard-coded by writer ID.
+
+paths:
+  split_manifest_csv: "reports/phase3a_split_manifest.csv"
+  preprocessing_metadata_csv: "preprocessed/preprocessing_metadata.csv"
+  unified_metadata_csv: "datasets/unified/metadata.csv"
+  duplicate_audit_csv: "reports/phase2_duplicate_audit.csv"
+  image_split_map_csv: "reports/phase3a_image_split_map.csv"
+
+  pairs_dir: "pairs"
+  train_pairs_csv: "pairs/train_pairs.csv"
+  val_pairs_csv: "pairs/val_pairs.csv"
+  test_pairs_csv: "pairs/test_pairs.csv"
+
+  measurement_report_json: "reports/phase3b_pair_measurement_report.json"
+  pair_counts_csv: "reports/phase3b_pair_counts.csv"
+  writer_pair_counts_csv: "reports/phase3b_writer_pair_counts.csv"
+  qc_report_json: "reports/phase3b_pair_qc_report.json"
+  generation_report_json: "reports/phase3b_pair_generation_report.json"
